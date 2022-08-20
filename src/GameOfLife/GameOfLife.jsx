@@ -2,7 +2,7 @@ import './GameOfLife.css';
 import React, {Component} from 'react';
 import Node from './Node/Node';
 import { dijkstra, evolveGrid, getNodesInShortestPathOrder } from './algorithms';
-import { AwesomeButton } from "react-awesome-button";
+import Button from './Components/Button';
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 15;
@@ -10,7 +10,7 @@ const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 35;
 
 const NUM_ROWS = 22;
-const NUM_COLS = 22;
+const NUM_COLS = 55;
 export const UNDERPOPULATION = 1;
 export const OVERPOPULATION = 4;
 export const BIRTH = 3;
@@ -22,7 +22,7 @@ export default class GameOfLife extends Component {
         this.state = {
           grid: [],
           mouseIsPressed: false,
-          isPaused: false,
+          isPaused: true,
           statesPerSec: 1,
         };
     }
@@ -51,21 +51,21 @@ export default class GameOfLife extends Component {
       this.setState({mouseIsPressed: false});
     }
   
-    animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
-      for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-        if (i === visitedNodesInOrder.length) {
-          setTimeout(() => {
-            this.animateShortestPath(nodesInShortestPathOrder);
-          }, 10 * i);
-          return;
-        }
-        setTimeout(() => {
-          const node = visitedNodesInOrder[i];
-          document.getElementById(`node-${node.row}-${node.col}`).className =
-            'node node-visited';
-        }, 10 * i);
-      }
-    }
+    // animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    //   for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+    //     if (i === visitedNodesInOrder.length) {
+    //       setTimeout(() => {
+    //         this.animateShortestPath(nodesInShortestPathOrder);
+    //       }, 10 * i);
+    //       return;
+    //     }
+    //     setTimeout(() => {
+    //       const node = visitedNodesInOrder[i];
+    //       document.getElementById(`node-${node.row}-${node.col}`).className =
+    //         'node node-visited';
+    //     }, 10 * i);
+    //   }
+    // }
     
     animateShortestPath(nodesInShortestPathOrder) {
       for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
@@ -78,6 +78,7 @@ export default class GameOfLife extends Component {
     }
 
     visualizeGameOfLife() {
+      console.log("starting game of life");
       this.setState({isPaused: false});
       setTimeout(() => {
         const curGrid = this.state.grid;
@@ -89,64 +90,43 @@ export default class GameOfLife extends Component {
       }, (1 / this.state.statesPerSec) * 1500 );
     }
   
-    visualizeDijkstra() {
-      const {grid} = this.state;
-      const startNode = grid[START_NODE_ROW][START_NODE_COL];
-      const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-      const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-      const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-      this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-    }
-  
     render() {
       const {grid, mouseIsPressed} = this.state;
       console.log('I was triggered during render');
       return (
-        <>
-          <button onClick={() => this.visualizeGameOfLife()}>
-            Play Conway's Game of Life
-          </button>
-          <button onClick={() => this.setState({isPaused: true})}>
-            Pause
-          </button>
-          <button onClick={() => this.resetGrid()}>
-            Clear
-          </button>
-          <button onClick={() => console.log(this.state.grid)}>
-            PrintGrid
-          </button>
-          {this.getButton("This is a button")}
-          <div className="grid">
-            {grid.map((row, rowIdx) => {
-              return (
-                <div key={rowIdx}>
-                  {row.map((node, nodeIdx) => {
-                    const {row, col, isAlive} = node;
-                    return (
-                      <Node
-                        key={nodeIdx}
-                        col={col}
-                        isAlive={isAlive}
-                        mouseIsPressed={mouseIsPressed}
-                        onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                        onMouseEnter={(row, col) =>
-                          this.handleMouseEnter(row, col)
-                        }
-                        onMouseUp={() => this.handleMouseUp()}
-                        row={row}></Node>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
-        </>
+        <div>
+        <h1>Conway's Game of Life</h1>
+          <Button text="Start" disabled={!this.state.isPaused} onClick={() => this.visualizeGameOfLife()}></Button>
+          <Button text="Clear" onClick={() => this.resetGrid()}></Button>
+          <Button text="Print Grid" onClick={() => console.log(this.state.grid)}></Button>
+          <Button text="Pause" onClick={() => this.setState({isPaused: true})}></Button>
+            <div className="grid" id="game-grid">
+              {grid.map((row, rowIdx) => {
+                return (
+                  <div key={rowIdx}>
+                    {row.map((node, nodeIdx) => {
+                      const {row, col, isAlive} = node;
+                      return (
+                        <Node
+                          key={nodeIdx}
+                          col={col}
+                          isAlive={isAlive}
+                          mouseIsPressed={mouseIsPressed}
+                          onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                          onMouseEnter={(row, col) =>
+                            this.handleMouseEnter(row, col)
+                          }
+                          onMouseUp={() => this.handleMouseUp()}
+                          row={row}></Node>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+        </div>
       );
     }
-}
-
-function getButton(name) {
-  return <AwesomeButton type="primary">{name}</AwesomeButton>
 }
 
 export const getInitialGrid = () => {
