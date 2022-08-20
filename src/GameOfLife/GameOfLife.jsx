@@ -10,9 +10,9 @@ const FINISH_NODE_ROW = 10;
 const FINISH_NODE_COL = 35;
 
 const NUM_ROWS = 22;
-const NUM_COLS = 55;
+const NUM_COLS = 33;
 export const UNDERPOPULATION = 1;
-export const OVERPOPULATION = 4;
+export const OVERPOPULATION = 5;
 export const BIRTH = 3;
 
 export default class GameOfLife extends Component {
@@ -23,7 +23,7 @@ export default class GameOfLife extends Component {
           grid: [],
           mouseIsPressed: false,
           isPaused: true,
-          statesPerSec: 1,
+          statesPerSec: 2,
         };
     }
     
@@ -87,23 +87,30 @@ export default class GameOfLife extends Component {
           this.setState({grid: newGrid});
           this.visualizeGameOfLife();
         }
-      }, (1 / this.state.statesPerSec) * 1500 );
+      }, (1 / this.state.statesPerSec) * 1000 );
     }
   
     render() {
       const {grid, mouseIsPressed} = this.state;
+      const handleSliderChange = (e) => this.setState({statesPerSec: e.target.value})
       console.log('I was triggered during render');
       return (
         <div>
-        <h1>Conway's Game of Life</h1>
-          <Button text="Start" disabled={!this.state.isPaused} onClick={() => this.visualizeGameOfLife()}></Button>
-          <Button text="Clear" onClick={() => this.resetGrid()}></Button>
-          <Button text="Print Grid" onClick={() => console.log(this.state.grid)}></Button>
-          <Button text="Pause" onClick={() => this.setState({isPaused: true})}></Button>
+          <h1>Conway's Game of Life</h1>
+          <div>
+            <Button text="Start" hoverColor="green" disabled={!this.state.isPaused} onClick={() => this.visualizeGameOfLife()}></Button>
+            <Button text="Stop" onClick={() => this.setState({isPaused: true})}></Button>
+            <Button text="Clear" onClick={() => this.resetGrid()}></Button>
+            <Button text="Print Grid" onClick={() => console.log(this.state.grid)}></Button>
+            <label id="bar-label" for="speedbar">Speed</label>
+            <input type="range" id="speedbar" min="0.2" max="10" value={this.state.statesPerSec} onChange={handleSliderChange}></input>
+          </div>
+          <div>
+          </div>
             <div className="grid" id="game-grid">
               {grid.map((row, rowIdx) => {
                 return (
-                  <div key={rowIdx}>
+                  <div className="grid-row" key={rowIdx}>
                     {row.map((node, nodeIdx) => {
                       const {row, col, isAlive} = node;
                       return (

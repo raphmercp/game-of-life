@@ -12,7 +12,7 @@ export const StyledButton = styled.button`
     box-shadow: 0px 2px 2px lightgray;
     transition: ease background-color 250ms;
     &:hover {
-        disabled ? "lightblue" : "red";
+    background-color: ${props => props.hoverColor || "red"};
     }
     &:disabled {
     cursor: default;

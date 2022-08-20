@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Button(props) {
     return (
-        <StyledButton disabled={props.disabled} onClick={props.onClick}>
+        <StyledButton hoverColor = {props.hoverColor} disabled={props.disabled} onClick={props.onClick}>
             {props.text}
         </StyledButton>
     )

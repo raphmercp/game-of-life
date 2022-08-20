@@ -29,20 +29,16 @@ function isNextIterationAlive(node, grid) {
 	if (row < grid.length - 1 && col > 0) 		neighbors.push(grid[row + 1][col - 1]);
 	if (row < grid.length - 1 && col < grid[0].length - 1) neighbors.push(grid[row + 1][col + 1]);
 	const liveNeighbors = neighbors.filter(neighbor => neighbor.isAlive).length;
-
 	
 	if (node.isAlive) {
-		console.log("row " + row + "has " + liveNeighbors);
 		const survives = UNDERPOPULATION < liveNeighbors && liveNeighbors < OVERPOPULATION;
 		if (survives) {
-			console.log("row " + node.row + " survives with " + liveNeighbors);
 		}
 		return UNDERPOPULATION < liveNeighbors && liveNeighbors < OVERPOPULATION;
 	}
 	else {
 		const isBorn = liveNeighbors === BIRTH;
 		if (isBorn) {
-			console.log("is born with " + liveNeighbors + "neighbors")
 		}
 		return isBorn;
 	}
